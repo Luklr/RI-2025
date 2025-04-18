@@ -150,33 +150,10 @@ def search(tf_idf_matrix: DynamicMatrix, query: str) -> list:
     
     return sorted_results
 
-# def main():
-#     if len(sys.argv) != 3:
-#         print("Uso:")
-#         print("python punto2.py [directorio/de/documentos] [consulta]")
-#         sys.exit(1)
-
-#     if not os.path.isdir(sys.argv[1]):
-#         print("El directorio de documentos no existe.")
-#         sys.exit(1)
-    
-#     arg1 = sys.argv[1]
-#     arg2 = sys.argv[2]
-
-#     tf_matrix = term_frequency_matrix(arg1)
-
-#     tf_idf_matrix = tf_idf(tf_matrix)
-    
-#     results = search(tf_idf_matrix, arg2)
-
-#     print("Resultados de la búsqueda:")
-#     for result in results:
-#         print(result)
-
 def main():
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         print("Uso:")
-        print("python punto2.py [directorio/de/documentos]")
+        print("python punto2.py [directorio/de/documentos] [consulta]")
         sys.exit(1)
 
     if not os.path.isdir(sys.argv[1]):
@@ -184,26 +161,49 @@ def main():
         sys.exit(1)
     
     arg1 = sys.argv[1]
-
-    queries = ["military base", "football players", "computer science", "dogs pets", "wood houses"]
+    arg2 = sys.argv[2]
 
     tf_matrix = term_frequency_matrix(arg1)
 
     tf_idf_matrix = tf_idf(tf_matrix)
     
-    for query in queries:
-        results = search(tf_idf_matrix, query)
-        print("Resultados de la búsqueda:")
-        count = 0
-        for result in results:
-            count += 1
-            if count > 50:
-                break
-            print(result)
-        with open("resultados.txt", "a", encoding="UTF-8") as file:
-            file.write(f"Resultados para la consulta: {query}\n")
-            for result in results:
-                file.write(str(result) + "\n")
+    results = search(tf_idf_matrix, arg2)
+
+    print("Resultados de la búsqueda:")
+    for result in results:
+        print(result)
+
+# def main():
+#     if len(sys.argv) != 2:
+#         print("Uso:")
+#         print("python punto2.py [directorio/de/documentos]")
+#         sys.exit(1)
+
+#     if not os.path.isdir(sys.argv[1]):
+#         print("El directorio de documentos no existe.")
+#         sys.exit(1)
+    
+#     arg1 = sys.argv[1]
+
+#     queries = ["military base", "football players", "computer science", "dogs pets", "wood houses"]
+
+#     tf_matrix = term_frequency_matrix(arg1)
+
+#     tf_idf_matrix = tf_idf(tf_matrix)
+    
+#     for query in queries:
+#         results = search(tf_idf_matrix, query)
+#         print("Resultados de la búsqueda:")
+#         count = 0
+#         for result in results:
+#             count += 1
+#             if count > 50:
+#                 break
+#             print(result)
+#         with open("resultados.txt", "a", encoding="UTF-8") as file:
+#             file.write(f"Resultados para la consulta: {query}\n")
+#             for result in results:
+#                 file.write(str(result) + "\n")
 
 if __name__ == "__main__":
     main()
