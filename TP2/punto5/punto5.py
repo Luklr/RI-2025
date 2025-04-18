@@ -6,30 +6,6 @@ from Tokenizer import Tokenizer
 from Matrix import DynamicMatrix
 import math
 
-# def add_terms_to_matrix(matrix, terms, doc_name):
-#     doc_index = -1
-#     for i in range (matrix.columns()):
-#         if matrix[0,i] == doc_name:
-#             doc_index = i
-#             break
-#     if doc_index == -1:
-#         return
-#     for term in terms:
-#         added = False
-#         for i in range (1,matrix.rows()):
-#             if matrix[i,0] == term:
-#                 matrix[i,doc_index] += 1
-#                 added = True
-#                 break
-#         if not added:
-#             matrix.add_row()
-#             matrix[matrix.rows()-1,0] = term
-#             actual = matrix[matrix.rows() - 1, doc_index]
-#             if actual == "":
-#                 matrix[matrix.rows() - 1, doc_index] = 1
-#             else:
-#                 matrix[matrix.rows() - 1, doc_index] = int(actual) + 1
-
 def add_terms_to_matrix(matrix, terms, doc_name):
     doc_col = matrix.ensure_doc_exists(doc_name)
     
@@ -66,18 +42,15 @@ def tf_idf(tf_matrix: DynamicMatrix) -> DynamicMatrix:
     
     print(f"Cantidad de terminos: {rows - 1}")
     
-    # Optimización 1: Precalcular document frequencies (DF) en paralelo
     df = [0] * rows
     for i in range(1, rows):
         df[i] = sum(1 for j in range(1, cols) if tf_matrix[i, j] > 0)
     
-    # Optimización 2: Calcular IDF vectorizado
     idf = [0] * rows
     for i in range(1, rows):
         idf[i] = math.log(num_docs / (df[i] + 1e-10)) if df[i] > 0 else 0
     
-    # Optimización 3: Procesamiento por bloques para mejor uso de caché
-    block_size = 1000  # Tamaño óptimo para caché L1/L2
+    block_size = 1000  
     for i_start in range(1, rows, block_size):
         i_end = min(i_start + block_size, rows)
         for j in range(1, cols):
@@ -94,12 +67,10 @@ def search(tf_idf_matrix: DynamicMatrix, query: str) -> list:
     tokenizer = Tokenizer(words=True, names=True)
     query_terms = tokenizer.tokenize(query, html_tags=True)
     
-    # Preprocesamiento rápido: contar términos de la query
     query_term_counts = {}
     for term in query_terms:
         query_term_counts[term] = query_term_counts.get(term, 0) + 1
     
-    # Preparar estructuras para cálculo eficiente
     doc_scores = {}
     query_norm = 0.0
     processed_terms = set()
@@ -172,38 +143,6 @@ def main():
     print("Resultados de la búsqueda:")
     for result in results:
         print(result)
-
-# def main():
-#     if len(sys.argv) != 2:
-#         print("Uso:")
-#         print("python punto2.py [directorio/de/documentos]")
-#         sys.exit(1)
-
-#     if not os.path.isdir(sys.argv[1]):
-#         print("El directorio de documentos no existe.")
-#         sys.exit(1)
-    
-#     arg1 = sys.argv[1]
-
-#     queries = ["military base", "football players", "computer science", "dogs pets", "wood houses"]
-
-#     tf_matrix = term_frequency_matrix(arg1)
-
-#     tf_idf_matrix = tf_idf(tf_matrix)
-    
-#     for query in queries:
-#         results = search(tf_idf_matrix, query)
-#         print("Resultados de la búsqueda:")
-#         count = 0
-#         for result in results:
-#             count += 1
-#             if count > 50:
-#                 break
-#             print(result)
-#         with open("resultados.txt", "a", encoding="UTF-8") as file:
-#             file.write(f"Resultados para la consulta: {query}\n")
-#             for result in results:
-#                 file.write(str(result) + "\n")
 
 if __name__ == "__main__":
     main()
