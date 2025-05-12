@@ -2,3 +2,7 @@
 */*/data/*
 */index/*
 */*/index/*
+*/chunks/*
+*/*/chunks/*
+*.log
+*.bin
