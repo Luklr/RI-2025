@@ -104,69 +104,6 @@ def merge_chunks(terms_to_id: dict, chunk_number: int)-> dict:
     return vocabulary
 
 
-# def bsbi(input_dir, chunk_limit):
-#     """
-#     BSBI algorithm for indexing documents in a directory.
-#     :param input_dir: Directory containing the documents to index.
-#     :param docs_read_for_chunk: Number of documents to read for each chunk.
-#     """
-#     # Initialize variables
-#     chunk_number = 0
-#     chunk_docs = []
-#     docs_read_for_chunk = 0
-#     tokenizer = Tokenizer(names=True, dates=True, urls=True, emails=True, words=True, numbers=True, abbreviations=True)
-#     terms_to_id = {}
-#     id_to_docs = {}
-#     print("Starting BSBI algorithm...")
-#     print("Chunks generation in progress...")
-#     times_chunk = []
-#     # Iterate through files in the input directory
-#     for root, _, files in os.walk(input_dir):
-#         for file in files:
-            
-#             file_path = os.path.join(root, file)
-#             docs_read_for_chunk += 1
-#             with open(file_path, 'r', encoding='utf-8') as f:
-#                 id_to_docs[len(id_to_docs) + 1] = file
-#                 terms_tuples: list[tuple] = process_file(f, len(id_to_docs), tokenizer, terms_to_id)
-#                 chunk_docs+= terms_tuples
-
-#                 # If the chunk size reaches the specified limit, process the chunk
-#                 if docs_read_for_chunk >= chunk_limit:
-#                     start_time_chunk = time.time()
-#                     process_chunk(chunk_docs, chunk_number)
-#                     docs_read_for_chunk = 0
-#                     chunk_number += 1
-#                     chunk_docs = []
-#                     end_time_chunk = time.time()
-#                     times_chunk.append(end_time_chunk - start_time_chunk)
-#                     print(f"Chunk {chunk_number} processed in {end_time_chunk - start_time_chunk:.2f} seconds")
-
-#     # Process any remaining documents in the last chunk
-#     chunk_number += 1
-#     if chunk_docs:
-#         start_time_chunk = time.time()
-#         process_chunk(chunk_docs, chunk_number)
-#         end_time_chunk = time.time()
-#     times_chunk.append(end_time_chunk - start_time_chunk)
-#     print(f"Chunk {chunk_number} processed in {end_time_chunk - start_time_chunk:.2f} seconds")
-
-#     print("Chunks generation completed.")
-#     print("Merging chunks...")
-#     start_time_merge = time.time()
-#     vocabulary: dict[list] = merge_chunks(terms_to_id, chunk_number)
-#     end_time_merge = time.time()
-#     print(f"Chunks merged in {end_time_merge - start_time_merge:.2f} seconds")
-#     print("Merging completed.")
-#     print("Indexing completed.")
-#     print(f"Total time for chunk processing: {sum(times_chunk):.2f} seconds")
-#     print(f"Average time per chunk: {sum(times_chunk) / len(times_chunk):.2f} seconds")
-#     print(f"Total time for merging: {end_time_merge - start_time_merge:.2f} seconds")
-
-#     pickle.dump(id_to_docs, open("id_to_docs.pkl", "wb"))
-#     pickle.dump(vocabulary, open("vocabulary.pkl", "wb"))
-
-
 def bsbi(input_dir, chunk_limit):
     """
     BSBI algorithm with improved logging and timing.
