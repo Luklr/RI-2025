@@ -1,3 +1,4 @@
+import bisect
 import struct
 import os
 import sys
@@ -29,7 +30,7 @@ def setup_logger():
     logger.addHandler(fh)
     return logger
 
-def process_file(file, docid, tokenizer: Tokenizer, terms_to_id: dict) -> list[tuple]:
+def process_file(file, docid, tokenizer: Tokenizer, terms_to_id: dict, id_to_docs: dict) -> list[tuple]:
     term_freq = {}
     for line in file:
         # Read the file line by line
@@ -45,8 +46,14 @@ def process_file(file, docid, tokenizer: Tokenizer, terms_to_id: dict) -> list[t
                 term_freq[term] = 1
             if term not in terms_to_id:
                 terms_to_id[term] = len(terms_to_id) + 1
+    
+    norm = 0.0
+    for term, freq in term_freq.items():
+        norm += freq ** 2
+    norm = math.sqrt(norm)
+    id_to_docs[docid].append(norm)
 
-    return [(terms_to_id[term], docid, freq) for term, freq in term_freq.items()]
+    return [(terms_to_id[term], docid, freq) for term, freq in term_freq.items()], id_to_docs
 
 
 def process_chunk(chunk_docs: list[tuple], chunk_number: int):
@@ -95,10 +102,12 @@ def merge_chunks(terms_to_id: dict, chunk_number: int)-> dict:
                     pointer.seek(pointer_position)
                     continue
                 posting_list.append((term_tuple[1], term_tuple[2]))
-
+        posting_list.sort(key=lambda x: x[0])
         with open(f"index.bin", "ab") as index_file:
-            index_file.write(struct.pack('II' * len(posting_list), *sum(posting_list, ())))
             index_file_position = index_file.tell()
+            for doc_id, freq in posting_list:
+                index_file.write(struct.pack('II', doc_id, freq))
+            
         vocabulary[term] = [index_file_position,len(posting_list),term_id]
     
     return vocabulary
@@ -141,11 +150,11 @@ def bsbi(input_dir, chunk_limit):
             
             with open(file_path, 'r', encoding='utf-8') as f:
                 doc_id = len(id_to_docs) + 1
-                id_to_docs[doc_id] = file
+                id_to_docs[doc_id] = [file]
                 
                 # Process file and measure time
                 start_file = perf_counter()
-                terms_tuples = process_file(f, doc_id, tokenizer, terms_to_id)
+                terms_tuples, id_to_docs = process_file(f, doc_id, tokenizer, terms_to_id, id_to_docs)
                 file_time = perf_counter() - start_file
                 
                 chunk_docs += terms_tuples

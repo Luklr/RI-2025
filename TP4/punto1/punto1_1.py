@@ -72,7 +72,7 @@ def main():
 
     # Print the posting list
     for doc_id, freq in posting_list:
-        print(f"{id_to_docs[doc_id]}:{doc_id}:{freq}")
+        print(f"{id_to_docs[doc_id][0]}:{doc_id}:{freq}")
 
 if __name__ == "__main__":
     main()

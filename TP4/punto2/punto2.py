@@ -105,7 +105,7 @@ def main():
         return
     
     for doc_id in result_set:
-        print(f"{id_to_docs[doc_id]}:{doc_id}")
+        print(f"{id_to_docs[doc_id][0]}:{doc_id}")
 
 if __name__ == "__main__":
     main()

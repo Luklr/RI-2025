@@ -94,7 +94,7 @@ def id_to_docs_set(id_to_docs: dict) -> set:
 def main():
     args = os.sys.argv
     if len(args) != 2:
-        print("Usage: python punto2.py <boolean_query>")
+        print("Usage: python punto3_memory.py <boolean_query>")
         return
 
     # start_time = perf_counter()
@@ -129,7 +129,7 @@ def main():
         return
 
     for doc_id in result_set:
-        print(f"{id_to_docs[doc_id]}:{doc_id}")
+        print(f"{id_to_docs[doc_id][0]}:{doc_id}")
 
 if __name__ == "__main__":
     main()
