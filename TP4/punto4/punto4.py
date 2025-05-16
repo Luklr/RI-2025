@@ -69,12 +69,12 @@ def document_at_a_time(query, k, vocabulary: dict, id_to_docs: dict) -> list[tup
 
         # Guardar en heap como Top-K
         if len(heap) < k:
-            heapq.heappush(heap, (doc_id, score))
+            heapq.heappush(heap, (score, doc_id))
         else:
-            heapq.heappushpop(heap, (doc_id, score))
+            heapq.heappushpop(heap, (score, doc_id))
 
     # Ordenar resultados de mayor a menor score
-    result = sorted(heap, key=lambda x: -x[1])
+    result = sorted(heap, key=lambda x: -x[0])
     return result
 
 
@@ -154,7 +154,7 @@ def main():
         print("No se encontraron documentos que coincidan con la consulta.")
         return
     
-    for doc_id, score in result:
+    for score, doc_id in result:
         print(f"{id_to_docs[doc_id][0]}:{doc_id}:{score:.4f}")
 
 if __name__ == "__main__":
