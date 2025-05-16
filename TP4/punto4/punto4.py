@@ -29,6 +29,11 @@ def load_id_to_docs(id_to_docs_path: dict) -> str:
 def document_at_a_time(query, k, vocabulary: dict, id_to_docs: dict) -> list[tuple]:
     """
     Evaluate a query and return the top-k documents.
+    :param query: The query as a dictionary of term frequencies.
+    :param k: The number of top documents to return.
+    :param vocabulary: The vocabulary dictionary.
+    :param id_to_docs: The mapping from doc_id to document info.
+    :return: A list of tuples (doc_id, score) for the top-k documents.
     """
     query_norm = 0.0
     heap = []
